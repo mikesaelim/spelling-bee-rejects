@@ -3,13 +3,14 @@ package io.github.mikesaelim;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import java.io.FileInputStream;
 import java.util.regex.Pattern;
 
 public class Main {
     static final Pattern ALPHABETIC = Pattern.compile("\\p{L}+");
+    static final Integer MAIN_NAMESPACE = 0;
+    static final String ENGLISH_HEADER = "==English==";
 
     public static void main(String[] args) {
         // You'll need to run this from the project folder
@@ -44,7 +45,7 @@ public class Main {
                     if (pageTitle != null) {
                         acceptedPageCount += 1;
                         System.out.println("      [" + pageTitle + "]");
-                        if (acceptedPageCount >= 3000) { break; }
+                        if (acceptedPageCount >= 100) { break; }
                     }
 
                     if (pageCount % 100000 == 0) {
@@ -64,6 +65,8 @@ public class Main {
     // Upon return, the reader should be at the end of the page
     static String parsePage(XMLEventReader reader) throws Exception {
         String title = null;
+        String namespace = null;
+        String text = null;
 
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
@@ -71,22 +74,17 @@ public class Main {
                 String elementName = event.asStartElement().getName().getLocalPart();
 
                 if ("title".equals(elementName)) {
-                    event = reader.nextEvent();
-                    if (event.isCharacters()) {
-                        title = event.asCharacters().getData();
-                        if (!ALPHABETIC.matcher(title).matches()) {
-                            goToEndOfPage(reader);
-                            return null;
-                        }
-                    } else {
-                        // TODO: error handling
-                        throw new Exception("Could not read title!");
-                    }
+                    title = extractText(reader);
                 } else if ("ns".equals(elementName)) {
-                    event = reader.nextEvent();
-                    if (!event.isCharacters() || Integer.parseInt(event.asCharacters().getData()) != 0) {
-                        goToEndOfPage(reader);
-                        return null;
+                    namespace = extractText(reader);
+                } else if ("revision".equals(elementName)) {
+                    while (reader.hasNext()) {
+                        event = reader.nextEvent();
+                        if (event.isStartElement() && "text".equals(event.asStartElement().getName().getLocalPart())) {
+                            text = extractText(reader);
+                        } else if (event.isEndElement() && "revision".equals(event.asEndElement().getName().getLocalPart())) {
+                            break;
+                        }
                     }
                 }
             } else if (event.isEndElement() && "page".equals(event.asEndElement().getName().getLocalPart())) {
@@ -94,16 +92,27 @@ public class Main {
             }
         }
 
-        return title;
+        if (namespace != null && Integer.parseInt(namespace) == MAIN_NAMESPACE &&
+                title != null && ALPHABETIC.matcher(title).matches() &&
+                text != null && text.contains(ENGLISH_HEADER)) {
+            return title;
+        }
+
+        return null;
     }
 
-    static void goToEndOfPage(XMLEventReader reader) throws Exception {
-        // Assumes that the reader is not already at the end of a page
+    static String extractText(XMLEventReader reader) throws Exception {
+        StringBuilder sb = new StringBuilder();
+
         while (reader.hasNext()) {
             XMLEvent event = reader.nextEvent();
-            if (event.isEndElement() && "page".equals(event.asEndElement().getName().getLocalPart())) {
+            if (event.isCharacters()) {
+                sb.append(event.asCharacters().getData());
+            } else {
                 break;
             }
         }
+
+        return sb.toString();
     }
 }
