@@ -4,7 +4,10 @@ import javax.xml.XMLConstants;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.XMLEvent;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.util.regex.Pattern;
 
 public class Main {
@@ -15,25 +18,26 @@ public class Main {
     public static void main(String[] args) {
         // You'll need to run this from the project folder
         String filepath = "data/enwiktionary-latest-pages-articles.xml";
+        String outputFilepath = "data/output.txt";
 
         try {
-            parse(filepath);
+            parse(filepath, outputFilepath);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    static void parse(String filepath) throws Exception {
+    static void parse(String filepath, String outputFilepath) throws Exception {
         System.out.println("Parsing " + filepath);
         int pageCount = 0;
-        int acceptedPageCount = 0;
 
         XMLInputFactory factory = XMLInputFactory.newInstance();
         // https://rules.sonarsource.com/java/RSPEC-2755
         factory.setProperty(XMLConstants.ACCESS_EXTERNAL_DTD, "");
         factory.setProperty(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
 
-        try (FileInputStream inputStream = new FileInputStream(filepath)) {
+        try (FileInputStream inputStream = new FileInputStream(filepath);
+            PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(outputFilepath)))) {
             XMLEventReader reader = factory.createXMLEventReader(inputStream);
 
             while (reader.hasNext()) {
@@ -43,9 +47,7 @@ public class Main {
 
                     String pageTitle = parsePage(reader);
                     if (pageTitle != null) {
-                        acceptedPageCount += 1;
-                        System.out.println("      [" + pageTitle + "]");
-                        if (acceptedPageCount >= 100) { break; }
+                        writer.println(pageTitle);
                     }
 
                     if (pageCount % 100000 == 0) {
