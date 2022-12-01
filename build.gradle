@@ -21,7 +21,7 @@ java {
 }
 
 application {
-    mainClass = 'io.github.mikesaelim.Main'
+    mainClass = 'io.github.mikesaelim.Main2'
 }
 
 test {
