@@ -9,4 +9,5 @@ modern inventions like "bakeable" or "assholeish". So I figured that extracting 
 from the [English Wiktionary](https://en.wiktionary.org/) would give me the most expansive
 vocabulary.
 
-This Java application currently runs locally with `./gradlew clean run`.
+This Java application currently runs locally with `./gradlew clean run --args=a:ciedhk`, where `a`
+is the central letter and `ciedhk` are the remaining 6 letters in the prompt.

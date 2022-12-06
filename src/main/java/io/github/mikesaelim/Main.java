@@ -18,7 +18,7 @@ public class Main {
     public static void main(String[] args) {
         // You'll need to run this from the project folder
         String filepath = "data/enwiktionary-latest-pages-articles.xml";
-        String outputFilepath = "data/output.txt";
+        String outputFilepath = "data/wordlist.txt";
 
         try {
             parse(filepath, outputFilepath);
