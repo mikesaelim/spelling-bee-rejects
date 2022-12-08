@@ -1,19 +1,17 @@
 package io.github.mikesaelim;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class Main2 {
-    static final Pattern PROMPT_PATTERN = Pattern.compile("[a-z]:[a-z]{6}");
+public class Solver {
+    private static final Pattern PROMPT_PATTERN = Pattern.compile("[a-z]:[a-z]{6}");
 
-    public static void main(String[] args) throws Exception {
-        // You'll need to run this from the project folder
-        String filepath = "data/wordlist.txt";
-        String promptString = args[0];
+    public static void solve(String promptString, String wordListPath) throws Exception {
         if (promptString == null) {
             throw new Exception();  // TODO respond to bad inputs
         }
@@ -21,7 +19,7 @@ public class Main2 {
 
         List<String> matches = new ArrayList<>();
         List<String> panagrams = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(filepath))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(wordListPath))) {  // TODO respond to bad inputs
             reader.lines().forEachOrdered((word) -> {
                 MatchData matchData = matches(word, prompt);
                 if (matchData.match()) {
@@ -39,7 +37,7 @@ public class Main2 {
         panagrams.stream().sorted().forEachOrdered(System.out::println);
     }
 
-    static Prompt processPrompt(String promptString) throws Exception {
+    private static Prompt processPrompt(String promptString) throws Exception {
         String cleanedPromptString = promptString.trim().toLowerCase();
         if (!PROMPT_PATTERN.matcher(cleanedPromptString).matches()) {
             throw new Exception();  // TODO respond to bad inputs
@@ -56,7 +54,7 @@ public class Main2 {
         return new Prompt(letters, cleanedPromptString.charAt(0));
     }
 
-    static MatchData matches(String word, Prompt prompt) {
+    private static MatchData matches(String word, Prompt prompt) {
         // TODO: handle accented characters?
         char[] chars = word.trim().toLowerCase().toCharArray();
 

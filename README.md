@@ -9,5 +9,31 @@ modern inventions like "bakeable" or "assholeish". So I figured that extracting 
 from the [English Wiktionary](https://en.wiktionary.org/) would give me the most expansive
 vocabulary.
 
-This Java application currently runs locally with `./gradlew clean run --args=a:ciedhk`, where `a`
-is the central letter and `ciedhk` are the remaining 6 letters in the prompt.
+This Java application currently just runs locally, and has two functions: generating a word
+list from the English Wiktionary, and using that word list to solve a Spelling Bee prompt.
+
+
+### How to use
+
+#### Generate a word list from the English Wiktionary
+
+First, download the latest English Wiktionary article dump from [their site](https://en.wiktionary.org/wiki/Help:FAQ#Downloading_Wiktionary).
+You should be looking for a file named `enwiktionary-latest-pages-articles.xml.bz2`. 
+Verify its md5 checksum, and unzip the dump to get an XML file with all the articles.
+
+Run 
+
+```./gradlew clean run --args="-g <path to xml file>"```
+
+to generate the word list, which goes to `data/wordlist.txt` by default. If you want to change
+the word list path, use `./gradlew clean run --args="-g <path to xml file> --wordlist <word list path>"`.
+
+#### Solve a Spelling Bee
+
+Run 
+
+```./gradlew clean run --args=a:ciedhk```
+
+where in this example `a` is the central letter and `ciedhk` are the remaining 6 letters in
+the prompt. This uses a word list located at `data/wordlist.txt` by default. If you want to
+change the word list path, use `./gradlew clean run --args="a:ciedhk --wordlist <word list path>"`.
