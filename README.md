@@ -11,6 +11,8 @@ vocabulary.
 
 This Java application currently just runs locally, and has two functions: generating a word
 list from the English Wiktionary, and using that word list to solve a Spelling Bee prompt.
+It is in a very hacky and janky state right now, because I haven't decided what to turn this
+into yet.
 
 
 ### How to use

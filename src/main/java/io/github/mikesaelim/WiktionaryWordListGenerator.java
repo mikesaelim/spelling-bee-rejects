@@ -82,6 +82,7 @@ public class WiktionaryWordListGenerator {
             }
         }
 
+        // TODO will also want to remove slurs and other things
         if (namespace != null && Integer.parseInt(namespace) == MAIN_NAMESPACE &&
                 title != null && ALPHABETIC.matcher(title).matches() &&
                 text != null && text.contains(ENGLISH_HEADER)) {
