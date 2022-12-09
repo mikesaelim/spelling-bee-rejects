@@ -19,7 +19,7 @@ public class Main {
             CommandLine commandLine = parser.parse(options, args);
 
             if (commandLine.getArgList().size() < 1) {
-                throw new Exception();  // TODO error handling
+                throw new Exception("Arguments missing - see the README for instructions");
             }
 
             if (commandLine.hasOption("g")) {

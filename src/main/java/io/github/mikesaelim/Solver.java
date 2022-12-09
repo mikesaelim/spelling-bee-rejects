@@ -13,13 +13,13 @@ public class Solver {
 
     public static void solve(String promptString, String wordListPath) throws Exception {
         if (promptString == null) {
-            throw new Exception();  // TODO respond to bad inputs
+            throw new Exception("Arguments missing - see the README for instructions");
         }
         Prompt prompt = processPrompt(promptString);
 
         List<String> matches = new ArrayList<>();
         List<String> panagrams = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(wordListPath))) {  // TODO respond to bad inputs
+        try (BufferedReader reader = new BufferedReader(new FileReader(wordListPath))) {
             reader.lines().forEachOrdered((word) -> {
                 MatchData matchData = matches(word, prompt);
                 if (matchData.match()) {
@@ -40,7 +40,7 @@ public class Solver {
     private static Prompt processPrompt(String promptString) throws Exception {
         String cleanedPromptString = promptString.trim().toLowerCase();
         if (!PROMPT_PATTERN.matcher(cleanedPromptString).matches()) {
-            throw new Exception();  // TODO respond to bad inputs
+            throw new Exception("Invalid prompt");
         }
 
         Set<Character> letters = new HashSet<>();
@@ -49,13 +49,13 @@ public class Solver {
             letters.add(c);
         }
         if (letters.size() != 7) {
-            throw new Exception();  // TODO respond to bad inputs
+            throw new Exception("Invalid prompt");
         }
         return new Prompt(letters, cleanedPromptString.charAt(0));
     }
 
     private static MatchData matches(String word, Prompt prompt) {
-        // TODO: handle accented characters?
+        // TODO handle accented characters?
         char[] chars = word.trim().toLowerCase().toCharArray();
 
         if (chars.length < 4) { return new MatchData(false, false); }
